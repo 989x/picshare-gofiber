@@ -1,19 +1,39 @@
 package controllers
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"picshare-gofiber/utils"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/joho/godotenv"
 )
 
-// Base directories
 var (
-	BaseDir         = "/var/www/uploads"
-	ContentBaseDir  = filepath.Join(BaseDir, "contents")
-	BusinessBaseDir = filepath.Join(BaseDir, "businesses")
+	BaseDir         string
+	ContentBaseDir  string
+	BusinessBaseDir string
 )
+
+func init() {
+	// Load environment variables
+	err := godotenv.Load()
+	if err != nil {
+		fmt.Println("Error loading .env file")
+	}
+
+	// Set base directory from environment
+	BaseDir = os.Getenv("BASE_UPLOAD_DIR")
+	if BaseDir == "" {
+		fmt.Println("BASE_UPLOAD_DIR not set in .env, falling back to default.")
+		BaseDir = "/var/www/uploads"
+	}
+
+	// Set subdirectories
+	ContentBaseDir = filepath.Join(BaseDir, "contents")
+	BusinessBaseDir = filepath.Join(BaseDir, "businesses")
+}
 
 // HandleFileUpload handles multiple files per key and organizes files by public_id
 func HandleFileUpload(c *fiber.Ctx, baseDir string) error {
