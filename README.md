@@ -25,22 +25,26 @@ A robust image upload API built with GoFiber.
 ## Prerequisites & Installation
 
 1. **Install Dependencies**  
-   Use `go mod tidy` to install dependencies:
-   ```bash
-   go mod tidy
-   ```
+  Use `go mod tidy` to install dependencies:
+  ```bash
+  go mod tidy
+  ```
 
 2. **Set Up Environment**  
-   Create a `.env` file and configure the upload directory:
-   ```bash
-   echo "UPLOADS_DIR=/path/to/upload/directory" > .env
-   ```
+  Create a `.env` file and configure the upload directory:
+  ```bash
+  echo "UPLOADS_DIR=/path/to/upload/directory" > .env
+
+  example
+
+  echo "UPLOADS_DIR=/var/www/uploads" > .env
+  ```
 
 3. **Run the Server**  
-   Start the application:
-   ```bash
-   go run cmd/main.go
-   ```
+  Start the application:
+  ```bash
+  go run cmd/main.go
+  ```
 
 ## API Endpoints
 

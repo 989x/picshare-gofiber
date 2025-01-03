@@ -2,22 +2,16 @@ package utils
 
 import (
 	"log"
-	"os"
 
 	"github.com/joho/godotenv"
 )
 
-// LoadEnv loads the .env file into environment variables
-func LoadEnv() error {
-	return godotenv.Load()
-}
-
-// MustGetEnv retrieves the value of the specified environment variable
-// and logs a fatal error if the variable is not set
-func MustGetEnv(key string) string {
-	value, exists := os.LookupEnv(key)
-	if !exists {
-		log.Fatalf("Environment variable %s is not set", key)
+// LoadEnv checks if the .env file exists and loads it if present
+func LoadEnv() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Printf(".env file not found or failed to load: %v", err)
+	} else {
+		log.Println(".env file loaded successfully")
 	}
-	return value
 }

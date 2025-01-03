@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"picshare-gofiber/routes"
 	"picshare-gofiber/utils"
@@ -12,13 +11,8 @@ import (
 )
 
 func main() {
-	// Load environment variables
-	if err := utils.LoadEnv(); err != nil {
-		log.Fatalf("Error loading .env file: %v", err)
-	}
-
-	// Check required environment variables
-	utils.MustGetEnv("UPLOADS_DIR") // Ensure UPLOADS_DIR is set
+	// Load .env file if exists
+	utils.LoadEnv()
 
 	app := fiber.New()
 
@@ -31,6 +25,6 @@ func main() {
 
 	// Start the server
 	port := "8081"
-	fmt.Println("Server running on port " + port)
+	log.Printf("Starting server on port %s", port)
 	app.Listen("0.0.0.0:" + port)
 }
