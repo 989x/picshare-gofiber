@@ -1,43 +1,99 @@
-# Picshare GoFiber
+# PicShare GoFiber
 
-A simple image upload server using Go and Fiber.
+A simple image upload API built with GoFiber.
+
+## Features
+
+- Upload images to organized directories
+- Automatically generates `public_id` for each upload
+- Supports versioned API (`api/v1`)
+
+## Prerequisites
+
+- Go 1.19+, Fiber v2
+- A directory `/var/www/uploads` with proper write permissions
 
 ## Installation
 
-### Prerequisites
-- Install [Golang](https://golang.org/dl/).
-- Ensure Nginx is installed (optional for proxy).
+1. Install dependencies:
 
-### Setup
+   ```bash
+   go mod tidy
+   ```
 
-```bash
-# Clone the repository
-mkdir picshare-gofiber && cd picshare-gofiber
+2. Run the server:
 
-# Initialize Go module
-go mod init picshare-gofiber
+   ```bash
+   go run cmd/main.go
+   ```
 
-# Install dependencies
-go get github.com/gofiber/fiber/v2
-go get github.com/gofiber/fiber/v2/middleware/cors
-go get github.com/gofiber/fiber/v2/middleware/logger
+## API Endpoints
 
-# Create necessary directories
-sudo mkdir -p /var/www/uploads/contents
-sudo mkdir -p /var/www/uploads/businesses
-sudo chown -R $USER:$USER /var/www/uploads
-sudo chmod -R 755 /var/www/uploads
+### Base URL
 
-# Run the server
-go run cmd/main.go
+```
+http://localhost:8081/api/v1
 ```
 
-### Testing
+### Upload Image (Contents)
 
-#### Upload an Image
-```bash
-curl -X POST -F "image=@path/to/image.jpg" http://127.0.0.1:8081/upload/contents
+**Endpoint**:  
+`POST /upload/contents`
+
+**Headers**:  
+`Content-Type: multipart/form-data`
+
+**Body**:  
+- Key: `image`  
+- Value: (Upload your image file)
+
+**Response**:
+```json
+{
+  "message": "Image uploaded successfully",
+  "public_id": "12a3b4cd",
+  "path": "/images/contents/12a3b4cd/your-image.webp"
+}
 ```
 
-#### Serve Static Files
-Visit: `http://127.0.0.1:8081/images/contents/`
+---
+
+### Upload Image (Businesses)
+
+**Endpoint**:  
+`POST /upload/businesses`
+
+**Headers**:  
+`Content-Type: multipart/form-data`
+
+**Body**:  
+- Key: `image`  
+- Value: (Upload your image file)
+
+**Response**:
+```json
+{
+  "message": "Image uploaded successfully",
+  "public_id": "56c7d8ef",
+  "path": "/images/businesses/56c7d8ef/your-image.webp"
+}
+```
+
+---
+
+### Serve Uploaded Images
+
+**Endpoint**:  
+`GET /images/<directory>/<public_id>/<filename>`
+
+**Examples**:  
+- Contents:
+  ```
+  http://localhost:8081/images/contents/12a3b4cd/your-image.webp
+  http://localhost:8081/images/contents/34b5a6de/sample-image.jpg
+  ```
+- Businesses:
+  ```
+  http://localhost:8081/images/businesses/78c9d1ef/business-logo.png
+  http://localhost:8081/images/businesses/45e2f3gh/company-banner.webp
+  ```
