@@ -29,7 +29,7 @@ sudo chown -R $USER:$USER /var/www/uploads
 sudo chmod -R 755 /var/www/uploads
 
 # Run the server
-go run main.go
+go run cmd/main.go
 ```
 
 ### Testing
