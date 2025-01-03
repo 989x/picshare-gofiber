@@ -4,9 +4,14 @@ A simple image upload API built with GoFiber.
 
 ## Features
 
-- Upload images to organized directories
-- Automatically generates `public_id` for each upload
+- Upload multiple images under `cover_image` and `body_image` keys
+- Automatically organizes files into directories by `public_id`
 - Supports versioned API (`api/v1`)
+- **Directories**: Files are stored under `/var/www/uploads`:
+  - `contents/` for content-related images
+  - `businesses/` for business-related images
+- **Dynamic Directory Structure**: Each upload creates a new subdirectory identified by a unique `public_id`
+- **Multipart Support**: Supports multiple files per key in a single request
 
 ## Prerequisites
 
@@ -35,7 +40,7 @@ A simple image upload API built with GoFiber.
 http://localhost:8081/api/v1
 ```
 
-### Upload Image (Contents)
+### Upload Images (Contents)
 
 **Endpoint**:  
 `POST /upload/contents`
@@ -44,21 +49,30 @@ http://localhost:8081/api/v1
 `Content-Type: multipart/form-data`
 
 **Body**:  
-- Key: `image`  
-- Value: (Upload your image file)
+- Key: `cover_image`  
+  - Value: (Upload one or more image files for cover images)
+- Key: `body_image`  
+  - Value: (Upload one or more image files for body images)
 
 **Response**:
 ```json
 {
-  "message": "Image uploaded successfully",
+  "message": "Images uploaded successfully",
   "public_id": "12a3b4cd",
-  "path": "/images/contents/12a3b4cd/your-image.webp"
+  "cover_image": [
+    "/images/contents/12a3b4cd/cover1.jpg",
+    "/images/contents/12a3b4cd/cover2.png"
+  ],
+  "body_image": [
+    "/images/contents/12a3b4cd/body1.jpg",
+    "/images/contents/12a3b4cd/body2.webp"
+  ]
 }
 ```
 
 ---
 
-### Upload Image (Businesses)
+### Upload Images (Businesses)
 
 **Endpoint**:  
 `POST /upload/businesses`
@@ -67,15 +81,24 @@ http://localhost:8081/api/v1
 `Content-Type: multipart/form-data`
 
 **Body**:  
-- Key: `image`  
-- Value: (Upload your image file)
+- Key: `cover_image`  
+  - Value: (Upload one or more image files for cover images)
+- Key: `body_image`  
+  - Value: (Upload one or more image files for body images)
 
 **Response**:
 ```json
 {
-  "message": "Image uploaded successfully",
+  "message": "Images uploaded successfully",
   "public_id": "56c7d8ef",
-  "path": "/images/businesses/56c7d8ef/your-image.webp"
+  "cover_image": [
+    "/images/businesses/56c7d8ef/cover1.jpg",
+    "/images/businesses/56c7d8ef/cover2.png"
+  ],
+  "body_image": [
+    "/images/businesses/56c7d8ef/body1.jpg",
+    "/images/businesses/56c7d8ef/body2.webp"
+  ]
 }
 ```
 
@@ -89,11 +112,11 @@ http://localhost:8081/api/v1
 **Examples**:  
 - Contents:
   ```
-  http://localhost:8081/images/contents/12a3b4cd/your-image.webp
-  http://localhost:8081/images/contents/34b5a6de/sample-image.jpg
+  http://localhost:8081/images/contents/12a3b4cd/cover1.jpg
+  http://localhost:8081/images/contents/34b5a6de/body1.webp
   ```
 - Businesses:
   ```
-  http://localhost:8081/images/businesses/78c9d1ef/business-logo.png
-  http://localhost:8081/images/businesses/45e2f3gh/company-banner.webp
+  http://localhost:8081/images/businesses/78c9d1ef/cover2.png
+  http://localhost:8081/images/businesses/45e2f3gh/body2.jpg
   ```

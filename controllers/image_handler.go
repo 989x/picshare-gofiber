@@ -15,20 +15,12 @@ var (
 	BusinessBaseDir = filepath.Join(BaseDir, "businesses")
 )
 
-// HandleFileUpload handles file upload and organizes files by public_id
+// HandleFileUpload handles multiple files per key and organizes files by public_id
 func HandleFileUpload(c *fiber.Ctx, baseDir string) error {
 	// Ensure directory exists
 	if err := ensureDir(baseDir); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Failed to create base directory",
-		})
-	}
-
-	// Get the uploaded file
-	file, err := c.FormFile("image")
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Failed to get image",
 		})
 	}
 
@@ -43,20 +35,52 @@ func HandleFileUpload(c *fiber.Ctx, baseDir string) error {
 		})
 	}
 
-	// Save the file in the public_id directory
-	filePath := filepath.Join(publicDir, file.Filename)
-	if err := c.SaveFile(file, filePath); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Failed to save image",
+	// Parse multipart form
+	form, err := c.MultipartForm()
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Failed to parse multipart form",
 		})
 	}
 
-	// Respond with the image path
-	return c.JSON(fiber.Map{
-		"message":   "Image uploaded successfully",
+	// Keys to handle
+	keys := []string{"cover_image", "body_image"}
+	response := fiber.Map{
+		"message":   "Images uploaded successfully",
 		"public_id": publicID,
-		"path":      "/images/" + filepath.Base(baseDir) + "/" + publicID + "/" + file.Filename,
-	})
+	}
+
+	for _, key := range keys {
+		// Get files for the key
+		files := form.File[key]
+		if files == nil {
+			continue // Skip if no files for the key
+		}
+
+		var filePaths []string
+		for _, file := range files {
+			// Save each file in the public_id directory
+			filePath := filepath.Join(publicDir, file.Filename)
+			if err := c.SaveFile(file, filePath); err != nil {
+				return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+					"error": "Failed to save image",
+				})
+			}
+			// Record the file path
+			filePaths = append(filePaths, "/images/"+filepath.Base(baseDir)+"/"+publicID+"/"+file.Filename)
+		}
+		// Add file paths to the response
+		response[key] = filePaths
+	}
+
+	// If no files were uploaded, return an error
+	if len(response) == 2 { // Only "message" and "public_id" exist
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "No valid files uploaded",
+		})
+	}
+
+	return c.JSON(response)
 }
 
 // ensureDir ensures a directory exists, creating it if necessary
