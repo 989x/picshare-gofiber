@@ -16,14 +16,8 @@ func main() {
 	app.Use(logger.New())
 	app.Use(cors.New())
 
-	// Base directory for uploads
-	baseDir := "/var/www/uploads"
-
 	// Setup routes
-	routes.SetupUploadRoutes(app, baseDir)
-
-	// API: Serve static images
-	app.Static("/images", baseDir)
+	routes.SetupUploadRoutes(app)
 
 	// Start the server
 	port := "8081"
