@@ -1,33 +1,43 @@
 # PicShare GoFiber
 
-A simple image upload API built with GoFiber.
+A robust image upload API built with GoFiber.
 
 ## Features
 
-- Upload multiple images under `cover_image` and `body_image` keys
-- Automatically organizes files into directories by `public_id`
-- Supports versioned API (`api/v1`)
-- **Directories**: Files are stored under `/var/www/uploads`:
-  - `contents/` for content-related images
-  - `businesses/` for business-related images
-- **Dynamic Directory Structure**: Each upload creates a new subdirectory identified by a unique `public_id`
-- **Multipart Support**: Supports multiple files per key in a single request
+1. **Multi-image Uploads**  
+   Upload multiple images under the keys `cover_image` and `body_image` in a single request.
 
-## Prerequisites
+2. **Dynamic Directory Organization**  
+   - Files are automatically organized into directories based on their purpose:
+     - `contents/`: For content-related images
+     - `businesses/`: For business-related images
+   - Each upload creates a unique subdirectory identified by a `public_id`.
 
-- Go 1.19+, Fiber v2
-- A directory `/var/www/uploads` with proper write permissions
+3. **Versioned API**  
+   The API follows a versioned structure (`api/v1`) for easier future upgrades.
 
-## Installation
+4. **Environment-based Configuration**  
+   The upload directory is dynamically configured using the `UPLOADS_DIR` variable from `.env`.
 
-1. Install dependencies:
+5. **Advanced Multipart Support**  
+   Handle multiple files per key (`cover_image`, `body_image`) seamlessly in a single API call.
 
+## Prerequisites & Installation
+
+1. **Install Dependencies**  
+   Use `go mod tidy` to install dependencies:
    ```bash
    go mod tidy
    ```
 
-2. Run the server:
+2. **Set Up Environment**  
+   Create a `.env` file and configure the upload directory:
+   ```bash
+   echo "UPLOADS_DIR=/path/to/upload/directory" > .env
+   ```
 
+3. **Run the Server**  
+   Start the application:
    ```bash
    go run cmd/main.go
    ```
