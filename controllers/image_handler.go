@@ -10,20 +10,24 @@ import (
 
 // Base directories read from .env
 var (
-	BaseDir         = os.Getenv("UPLOADS_DIR")
-	ContentBaseDir  = filepath.Join(BaseDir, "contents")
-	BusinessBaseDir = filepath.Join(BaseDir, "businesses")
+	BaseDir         string
+	ContentBaseDir  string
+	BusinessBaseDir string
 )
+
+// InitDirectories initializes the base directories
+func InitDirectories() error {
+	BaseDir = os.Getenv("UPLOADS_DIR")
+	if BaseDir == "" {
+		return fiber.NewError(fiber.StatusInternalServerError, "UPLOADS_DIR is not set in the environment variables")
+	}
+	ContentBaseDir = filepath.Join(BaseDir, "contents")
+	BusinessBaseDir = filepath.Join(BaseDir, "businesses")
+	return nil
+}
 
 // HandleFileUpload handles multiple files per key and organizes files by public_id
 func HandleFileUpload(c *fiber.Ctx, baseDir string) error {
-	// Check if BaseDir is set
-	if BaseDir == "" {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "UPLOADS_DIR is not set in the environment variables",
-		})
-	}
-
 	// Ensure directory exists
 	if err := ensureDir(baseDir); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
