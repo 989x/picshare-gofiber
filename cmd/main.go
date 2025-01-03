@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"picshare-gofiber/routes"
+	"picshare-gofiber/utils"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -10,6 +12,14 @@ import (
 )
 
 func main() {
+	// Load environment variables
+	if err := utils.LoadEnv(); err != nil {
+		log.Fatalf("Error loading .env file: %v", err)
+	}
+
+	// Check required environment variables
+	utils.MustGetEnv("UPLOADS_DIR") // Ensure UPLOADS_DIR is set
+
 	app := fiber.New()
 
 	// Middleware

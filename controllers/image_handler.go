@@ -8,9 +8,9 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// Base directories
+// Base directories read from .env
 var (
-	BaseDir         = "/var/www/uploads"
+	BaseDir         = utils.MustGetEnv("UPLOADS_DIR") // Must be set in .env
 	ContentBaseDir  = filepath.Join(BaseDir, "contents")
 	BusinessBaseDir = filepath.Join(BaseDir, "businesses")
 )
